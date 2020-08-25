@@ -23,7 +23,7 @@
     },
     "license": "Apache-2.0",
     "main": "lib/index.js",
-    "name": "openvidu-node-client",
+    "name": "@techsee/openvidu-node-client",
     "repository": {
         "type": "git",
         "url": "git://github.com/OpenVidu/openvidu"
@@ -33,5 +33,5 @@
         "docs": "./generate-docs.sh"
     },
     "typings": "lib/index.d.ts",
-    "version": "2.15.0"
+    "version": "12.15.1"
 }
