@@ -24,6 +24,7 @@ import { Session } from './Session';
 import { SessionProperties } from './SessionProperties';
 import { RecordingLayout } from './RecordingLayout';
 import { RecordingMode } from 'RecordingMode';
+import {URL} from 'url';
 
 /**
  * @hidden
@@ -144,7 +145,7 @@ export class OpenVidu {
             hasAudio: !!(properties.hasAudio),
             hasVideo: !!(properties.hasVideo)
           };
-          if (data.outputMode.toString() === Recording.OutputMode[Recording.OutputMode.COMPOSED] 
+          if (data.outputMode.toString() === Recording.OutputMode[Recording.OutputMode.COMPOSED]
           || data.outputMode.toString() === Recording.OutputMode[Recording.OutputMode.COMPOSED_QUICK_START]) {
             data.resolution = !!properties.resolution ? properties.resolution : '1920x1080';
             data.recordingLayout = !!properties.recordingLayout ? properties.recordingLayout : RecordingLayout.BEST_FIT;
