@@ -478,7 +478,7 @@ export class Session {
         }
 
         this.activeConnections = [];
-        json.connections.content.forEach(connection => {
+        json.connections && json.connections.content && json.connections.content.forEach(connection => {
             const publishers: Publisher[] = [];
             connection.publishers.forEach(publisher => {
                 publishers.push(new Publisher(publisher));
