@@ -336,9 +336,14 @@ export class OpenVidu {
     const browser = platform.name;
     const family = platform.os!!.family;
     const userAgent = !!platform.ua ? platform.ua : navigator.userAgent;
+    
+    logger.debug('checkSystemRequirements: {browser:' + browser + ', family: ' + family + ', userAgent:' + userAgent + '}');
 
     if(this.isIPhoneOrIPad(userAgent)) {
-        if(this.isIOSWithSafari(userAgent) || platform['isIonicIos']){
+        const isIOSWithSafari = this.isIOSWithSafari(userAgent);
+        logger.debug('isIOSWithSafari: ' + isIOSWithSafari + ' isIonicIos: ' + platform['isIonicIos']);
+      
+        if(isIOSWithSafari || platform['isIonicIos']){
           return 1;
         }
       return 0;
@@ -354,6 +359,7 @@ export class OpenVidu {
       (browser === 'Android Browser') || (browser === 'Electron') ||
       (browser === 'Samsung Internet Mobile') || (browser === 'Samsung Internet')
     ) {
+      
       return 1;
     }
     // Reject iPhones and iPads if not Safari ('Safari' also covers Ionic for iOS)
