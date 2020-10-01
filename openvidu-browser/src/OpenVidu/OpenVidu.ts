@@ -336,36 +336,34 @@ export class OpenVidu {
     const browser = platform.name;
     const family = platform.os!!.family;
     const userAgent = !!platform.ua ? platform.ua : navigator.userAgent;
-    
-    logger.debug('checkSystemRequirements: {browser:' + browser + ', family: ' + family + ', userAgent:' + userAgent + '}');
+
+    logger.log('checkSystemRequirements: {browser:' + browser + ', family: ' + family + ', userAgent:' + userAgent + '}');
 
     if(this.isIPhoneOrIPad(userAgent)) {
         const isIOSWithSafari = this.isIOSWithSafari(userAgent);
-        logger.debug('isIOSWithSafari: ' + isIOSWithSafari + ' isIonicIos: ' + platform['isIonicIos']);
-      
+        logger.log('isIOSWithSafari: ' + isIOSWithSafari + ' isIonicIos: ' + platform['isIonicIos']);
+
         if(isIOSWithSafari || platform['isIonicIos']){
           return 1;
         }
-      return 0;
     }
 
     // Accept: Chrome (desktop and Android), Firefox (desktop and Android), Opera (desktop and Android),
     // Safari (OSX and iOS), Ionic (Android and iOS), Samsung Internet Browser (Android)
     if (
-      (browser === 'Safari') || (browser === 'Browser Safari') ||
+      (browser && browser.includes('Safari')) ||
       (browser === 'Chrome') || (browser === 'Chrome Mobile') ||
       (browser === 'Firefox') || (browser === 'Firefox Mobile') ||
       (browser === 'Opera') || (browser === 'Opera Mobile') ||
       (browser === 'Android Browser') || (browser === 'Electron') ||
       (browser === 'Samsung Internet Mobile') || (browser === 'Samsung Internet')
     ) {
-      
+
       return 1;
     }
     // Reject iPhones and iPads if not Safari ('Safari' also covers Ionic for iOS)
     // Reject others browsers not mentioned above
     return 0;
-
   }
 
   /**
