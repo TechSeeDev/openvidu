@@ -98,6 +98,10 @@ export class OpenVidu {
   /**
    * @hidden
    */
+  forceRelay: boolean;
+  /**
+   * @hidden
+   */
   role: string;
   /**
    * @hidden

@@ -1266,6 +1266,7 @@ export class Session extends EventDispatcher {
             const webrtcStatsInterval = queryParams['webrtcStatsInterval'];
             const openviduServerVersion = queryParams['version'];
             const enableStun = queryParams['enableStun'];
+            const notForceRelay = queryParams['notForceRelay'];
 
             if (!!secret) {
                 this.openvidu.secret = secret;
@@ -1273,6 +1274,8 @@ export class Session extends EventDispatcher {
             if (!!recorder) {
                 this.openvidu.recorder = true;
             }
+            this.openvidu.forceRelay = false;
+
             if (!!turnUsername && !!turnCredential) {
                 if (!!enableStun && enableStun === '1') {
                     const stunUrl = 'stun:' + coturnIp + ':' + coturnPort;
@@ -1290,7 +1293,9 @@ export class Session extends EventDispatcher {
                     this.openvidu.iceServers = [
                         {urls: turnUrls, username: turnUsername, credential: turnCredential}
                     ];
-
+                    if (!notForceRelay) {
+                        this.openvidu.forceRelay = true;
+                    }
                 }
                 logger.log("ICE Servers: " + JSON.stringify(this.openvidu.iceServers));
             }

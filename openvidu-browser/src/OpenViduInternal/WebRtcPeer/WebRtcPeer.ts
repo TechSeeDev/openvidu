@@ -36,6 +36,7 @@ export interface WebRtcPeerConfiguration {
     mediaStream?: MediaStream;
     mode?: 'sendonly' | 'recvonly' | 'sendrecv';
     id?: string;
+    forceRelay: boolean;
 }
 
 export class WebRtcPeer {
@@ -52,7 +53,11 @@ export class WebRtcPeer {
     constructor(protected configuration: WebRtcPeerConfiguration) {
         this.configuration.iceServers = (!!this.configuration.iceServers && this.configuration.iceServers.length > 0) ? this.configuration.iceServers : freeice();
 
-        this.pc = new RTCPeerConnection({ iceServers: this.configuration.iceServers });
+        const opt: any = { iceServers: this.configuration.iceServers };
+        if (configuration.forceRelay) {
+            opt.iceTransportPolicy = 'relay';
+        }
+        this.pc = new RTCPeerConnection(opt);
         this.id = !!configuration.id ? configuration.id : this.generateUniqueId();
 
         this.pc.onicecandidate = event => {
