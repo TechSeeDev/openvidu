@@ -1258,11 +1258,14 @@ export class Session extends EventDispatcher {
             const secret = queryParams['secret'];
             const recorder = queryParams['recorder'];
             const coturnIp = queryParams['coturnIp'];
+            const coturn2Ip = queryParams['coturn2Ip'];
+            const coturnPort = queryParams['coturnPort'] || '443';
             const turnUsername = queryParams['turnUsername'];
             const turnCredential = queryParams['turnCredential'];
             const role = queryParams['role'];
             const webrtcStatsInterval = queryParams['webrtcStatsInterval'];
             const openviduServerVersion = queryParams['version'];
+            const enableStun = queryParams['enableStun'];
 
             if (!!secret) {
                 this.openvidu.secret = secret;
@@ -1271,15 +1274,25 @@ export class Session extends EventDispatcher {
                 this.openvidu.recorder = true;
             }
             if (!!turnUsername && !!turnCredential) {
-                const stunUrl = 'stun:' + coturnIp + ':3478';
-                const turnUrl1 = 'turn:' + coturnIp + ':3478';
-                const turnUrl2 = turnUrl1 + '?transport=tcp';
-                this.openvidu.iceServers = [
-                    { urls: [stunUrl] },
-                    { urls: [turnUrl1, turnUrl2], username: turnUsername, credential: turnCredential }
-                ];
-                logger.log("STUN/TURN server IP: " + coturnIp);
-                logger.log('TURN temp credentials [' + turnUsername + ':' + turnCredential + ']');
+                if (!!enableStun && enableStun === '1') {
+                    const stunUrl = 'stun:' + coturnIp + ':' + coturnPort;
+                    const turnUrl1 = 'turn:' + coturnIp + ':' + coturnPort;
+                    const turnUrl2 = turnUrl1 + '?transport=tcp';
+                    this.openvidu.iceServers = [
+                        {urls: [stunUrl]},
+                        {urls: [turnUrl1, turnUrl2], username: turnUsername, credential: turnCredential}
+                    ];
+                } else {
+                    const turnUrls = ['turns:' + coturnIp + ':' + coturnPort +'?transport=tcp'];
+	                if (!!coturn2Ip) {
+                        turnUrls.push('turns:' + coturn2Ip + ':' + coturnPort +'?transport=tcp')
+                    }
+                    this.openvidu.iceServers = [
+                        {urls: turnUrls, username: turnUsername, credential: turnCredential}
+                    ];
+
+                }
+                logger.log("ICE Servers: " + JSON.stringify(this.openvidu.iceServers));
             }
             if (!!role) {
                 this.openvidu.role = role;
@@ -1296,12 +1309,14 @@ export class Session extends EventDispatcher {
                 }
             }
 
-            this.openvidu.wsUri = 'wss://' + url.host + '/openvidu';
-            this.openvidu.httpUri = 'https://' + url.host;
+            const extractPort = (!!url.port) ? ':' + url.port : '';
+            this.openvidu.wsUri = 'wss://' + url.host + extractPort + '/openvidu';
+            this.openvidu.httpUri = 'https://' + url.host + extractPort;
+            logger.info("openvidu-server http host:" + this.openvidu.httpUri);
+            logger.info("openvidu-server wss host:" + this.openvidu.wsUri);
 
         } else {
             logger.error('Token "' + token + '" is not valid')
         }
     }
-
 }

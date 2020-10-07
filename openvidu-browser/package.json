@@ -43,5 +43,5 @@
         "tag": "git tag v$npm_package_version -f | git push -f --tags"
     },
     "types": "lib/index.d.ts",
-    "version": "12.15.1"
+    "version": "12.15.2"
 }
