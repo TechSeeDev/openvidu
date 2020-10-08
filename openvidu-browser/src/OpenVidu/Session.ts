@@ -1286,9 +1286,11 @@ export class Session extends EventDispatcher {
                         {urls: [turnUrl1, turnUrl2], username: turnUsername, credential: turnCredential}
                     ];
                 } else {
-                    const turnUrls = ['turns:' + coturnIp + ':' + coturnPort +'?transport=tcp'];
+                    const turnUrls = ['turns:' + coturnIp + ':' + coturnPort +'?transport=tcp',
+                        'turn:' + coturnIp + ':' + coturnPort +'?transport=tcp'];
 	                if (!!coturn2Ip) {
                         turnUrls.push('turns:' + coturn2Ip + ':' + coturnPort +'?transport=tcp')
+                        turnUrls.push('turn:' + coturn2Ip + ':' + coturnPort +'?transport=tcp')
                     }
                     this.openvidu.iceServers = [
                         {urls: turnUrls, username: turnUsername, credential: turnCredential}
