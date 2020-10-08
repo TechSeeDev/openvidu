@@ -814,7 +814,8 @@ export class Stream extends EventDispatcher {
                 mediaConstraints: userMediaConstraints,
                 onicecandidate: this.connection.sendIceCandidate.bind(this.connection),
                 iceServers: this.getIceServersConf(),
-                simulcast: false
+                simulcast: false,
+                forceRelay: this.session.openvidu.forceRelay
             };
 
             const successCallback = (sdpOfferParam) => {
@@ -913,7 +914,8 @@ export class Stream extends EventDispatcher {
                 onicecandidate: this.connection.sendIceCandidate.bind(this.connection),
                 mediaConstraints: offerConstraints,
                 iceServers: this.getIceServersConf(),
-                simulcast: false
+                simulcast: false,
+                forceRelay: this.session.openvidu.forceRelay
             };
 
             const successCallback = (sdpOfferParam) => {
