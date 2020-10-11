@@ -142,6 +142,10 @@ public class OpenviduConfig {
 
 	private String coturnIp;
 
+	private String coturnDNS;
+
+	private Integer coturnPort;
+
 	private String coturnRedisIp;
 
 	private boolean openviduWebhookEnabled;
@@ -273,6 +277,14 @@ public class OpenviduConfig {
 	public String getCoturnIp() {
 		return this.coturnIp;
 	}
+
+	public String getCoturnDNS() {
+    		return this.coturnDNS;
+    }
+
+	public Integer getCoturnPort() {
+    	return this.coturnPort;
+    }
 
 	public RecordingNotification getOpenViduRecordingNotification() {
 		return this.openviduRecordingNotification;
@@ -452,7 +464,7 @@ public class OpenviduConfig {
 	}
 
 	protected List<String> getNonUserProperties() {
-		return Arrays.asList("server.port", "SERVER_PORT", "DOTENV_PATH", "COTURN_IP", "COTURN_REDIS_IP",
+		return Arrays.asList("server.port", "SERVER_PORT", "DOTENV_PATH", "COTURN_IP", "COTURN_PORT", "COTURN_REDIS_IP",
 				"COTURN_REDIS_DBNAME", "COTURN_REDIS_PASSWORD", "COTURN_REDIS_CONNECT_TIMEOUT");
 	}
 
@@ -504,6 +516,8 @@ public class OpenviduConfig {
 
 		checkCoturnIp();
 
+		checkCoturnPort();
+
 		coturnRedisIp = asOptionalInetAddress("COTURN_REDIS_IP");
 
 		checkWebhook();
@@ -524,13 +538,21 @@ public class OpenviduConfig {
 		}
 	}
 
+	private void checkCoturnPort() {
+	    Integer port = asNonNegativeInteger("COTURN_PORT");
+
+	    this.coturnPort = (port > 0) ? port : 443;
+	}
+
 	private void checkCoturnIp() {
 		String property = "COTURN_IP";
 		coturnIp = asOptionalIPv4OrIPv6(property);
+		this.coturnDNS = getValue(property);
 
 		if (coturnIp == null || this.coturnIp.isEmpty()) {
 			try {
 				this.coturnIp = new URL(this.getFinalUrl()).getHost();
+				log.info("checkCoturnIp this.coturnIp=" + this.coturnIp + " # this.coturnDNS=" + this.coturnDNS);
 			} catch (MalformedURLException e) {
 				log.error("Can't get Domain name from OpenVidu public Url: " + e.getMessage());
 			}

@@ -52,7 +52,7 @@ public class TokenGeneratorDefault implements TokenGenerator {
 		if (this.openviduConfig.isTurnadminAvailable()) {
 			turnCredentials = coturnCredentialsService.createUser();
 			if (turnCredentials != null) {
-				token += "&coturnIp=" + openviduConfig.getCoturnIp();
+				token += "&coturnIp=" + openviduConfig.getCoturnDNS();
 				token += "&turnUsername=" + turnCredentials.getUsername();
 				token += "&turnCredential=" + turnCredentials.getCredential();
 			}
