@@ -224,8 +224,8 @@ export class Session extends EventDispatcher {
      *
      * The [[Session]] object of every other participant connected to the session will dispatch a `connectionDestroyed` event in any case. See [[ConnectionEvent]] to learn more.
      */
-    disconnect(): void {
-        this.leave(false, 'disconnect');
+    disconnect(refreshTrigger?: boolean): void {
+        this.leave(false, 'disconnect', refreshTrigger);
     }
 
     subscribe(stream: Stream, targetElement: string | HTMLElement): Subscriber;
@@ -1068,13 +1068,14 @@ export class Session extends EventDispatcher {
     /**
      * @hidden
      */
-    leave(forced: boolean, reason: string): void {
+    leave(forced: boolean, reason: string, refreshTrigger?: boolean): void {
 
         forced = !!forced;
         logger.info('Leaving Session (forced=' + forced + ')');
 
         if (!!this.connection) {
             if (!this.connection.disposed && !forced) {
+                logger.info('Leaving Session (sendRequest - leaveRoom)');
                 this.openvidu.sendRequest('leaveRoom', (error, response) => {
                     if (error) {
                         logger.error(error);
@@ -1085,13 +1086,18 @@ export class Session extends EventDispatcher {
                 this.openvidu.closeWs();
             }
 
-            this.stopPublisherStream(reason);
+            logger.info('Leaving Session (refreshTrigger=' + refreshTrigger + ')');
 
-            if (!this.connection.disposed) {
-                // Make Session object dispatch 'sessionDisconnected' event (if it is not already disposed)
-                const sessionDisconnectEvent = new SessionDisconnectedEvent(this, reason);
-                this.ee.emitEvent('sessionDisconnected', [sessionDisconnectEvent]);
-                sessionDisconnectEvent.callDefaultBehavior();
+            if (!refreshTrigger) {
+                this.stopPublisherStream(reason);
+
+                if (!this.connection.disposed) {
+                    // Make Session object dispatch 'sessionDisconnected' event (if it is not already disposed)
+                    const sessionDisconnectEvent = new SessionDisconnectedEvent(this, reason);
+
+                    this.ee.emitEvent('sessionDisconnected', [sessionDisconnectEvent]);
+                    sessionDisconnectEvent.callDefaultBehavior();
+                }
             }
         } else {
             logger.warn('You were not connected to the session ' + this.sessionId);
