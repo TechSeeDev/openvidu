@@ -1,7 +1,7 @@
 {
     "author": "OpenVidu",
     "dependencies": {
-        "axios": "0.19.2",
+        "axios": "0.21.1",
         "buffer": "5.6.0"
     },
     "description": "OpenVidu Node Client",
@@ -35,5 +35,5 @@
         "tag": "git tag v$npm_package_version -f | git push -f --tags"
     },
     "typings": "lib/index.d.ts",
-    "version": "12.15.4"
+    "version": "12.15.5"
 }
